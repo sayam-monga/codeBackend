@@ -5,19 +5,20 @@ const cors = require("cors");
 
 const app = express();
 app.use(
-  cors({ origin: "*", methods: ["GET", "POST", "OPTIONS"], credentials: true })
+  cors({ origin: process.env.CLIENT_URL || "*", methods: ["GET", "POST"], credentials: true })
 );
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: "*", methods: ["GET", "POST", "OPTIONS"], credentials: true },
+  cors: { origin: process.env.CLIENT_URL || "*", methods: ["GET", "POST"], credentials: true },
   transports: ["websocket", "polling"],
+  allowEIO3: true,
 });
 
 const rooms = new Map();
 
 io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
+  console.log(`User connected: ${socket.id} from ${socket.handshake.address}`);
 
   socket.on("join-room", ({ roomId, userName }) => {
     socket.join(roomId);
@@ -72,7 +73,8 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = 80;
-httpServer.listen(PORT, () => {
+const PORT = process.env.PORT || 3001;
+const HOST = "0.0.0.0";
+httpServer.listen(PORT, HOST, () => {
   console.log(`Code server running on port ${PORT}`);
 });
