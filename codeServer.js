@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = 80;
 httpServer.listen(PORT, () => {
   console.log(`Code server running on port ${PORT}`);
 });
